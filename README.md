@@ -37,12 +37,18 @@ Discord Server： [https://discord.gg/4BZBZuyx7p](https://discord.gg/4BZBZuyx7p)
 ## 部署
 
 ### 本地测试
-
+python 版本 3.10.11， 其他更新版本安装lxml 时会报错。（当前lxml最新版本为5.3.0，只支持到python3.10）
+https://www.python.org/downloads/release/python-31011/
 首先确保安装了[pipenv](https://github.com/pypa/pipenv)
 
 ``` bash
 git clone https://github.com/alphardex/RSSHub-python
 cd RSSHub-python
+
+py -3.10 -m pipenv install --dev
+安装lxml
+https://pypi.org/project/lxml/#files
+
 pipenv install --dev
 pipenv shell
 flask run
