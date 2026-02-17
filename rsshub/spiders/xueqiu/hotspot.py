@@ -105,12 +105,27 @@ def ctx():
             }]
         }
 
-    posts = asyncio.run(get_hotspot_posts())
-    items = [parse_post(post) for post in posts]
-    return {
-        'title': '雪球热点动态',
-        'link': 'https://xueqiu.com/?category=hotspot',
-        'description': '雪球热点话题和热门动态',
-        'author': 'hillerliao',
-        'items': items 
-    }
+    try:
+        posts = asyncio.run(get_hotspot_posts())
+        items = [parse_post(post) for post in posts]
+        return {
+            'title': '雪球热点动态',
+            'link': 'https://xueqiu.com/?category=hotspot',
+            'description': '雪球热点话题和热门动态',
+            'author': 'hillerliao',
+            'items': items 
+        }
+    except Exception as e:
+        # Handle any errors (e.g., playwright browsers not installed, network errors, etc.)
+        print(f"Error in xueqiu hotspot: {e}")
+        return {
+            'title': '雪球热点动态 (Error)',
+            'link': 'https://xueqiu.com/?category=hotspot',
+            'description': f'Error fetching hotspot content: {str(e)}',
+            'author': 'hillerliao',
+            'items': [{
+                'title': 'Error fetching content',
+                'description': f'An error occurred while fetching the hotspot content. Error: {str(e)}',
+                'link': 'https://xueqiu.com/?category=hotspot'
+            }]
+        }
