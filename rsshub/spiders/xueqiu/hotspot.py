@@ -78,14 +78,47 @@ async def get_hotspot_posts():
                 return []
 
 
+def parse_timestamp(timestamp_str):
+    """Parse Xueqiu timestamp to ISO format"""
+    if not timestamp_str or timestamp_str == "N/A":
+        return arrow.now().isoformat()
+    
+    try:
+        # Handle various timestamp formats from Xueqiu
+        # Examples: "今天 14:30", "02-15 09:00", "2026-02-15 09:00"
+        import re
+        from datetime import datetime
+        
+        if "今天" in timestamp_str:
+            # Today's post
+            time_match = re.search(r'(\d{1,2}):(\d{2})', timestamp_str)
+            if time_match:
+                hour, minute = time_match.groups()
+                now = arrow.now()
+                return now.replace(hour=int(hour), minute=int(minute), second=0).isoformat()
+        elif re.match(r'\d{2}-\d{2}\s+\d{1,2}:\d{2}', timestamp_str):
+            # This year's post (MM-DD HH:MM)
+            now = arrow.now()
+            parsed = arrow.get(f"{now.year}-{timestamp_str}", 'YYYY-MM-DD HH:mm')
+            return parsed.isoformat()
+        else:
+            # Try to parse as-is
+            return arrow.get(timestamp_str).isoformat()
+    except Exception:
+        # If parsing fails, return current time
+        return arrow.now().isoformat()
+
+
 def parse_post(post):
     """解析单条动态数据"""
     item = {}
-    text = re.sub('<[^<]+?>', '', post.get('content', '雪球热点'))
+    # Get text content - it's already been processed by BeautifulSoup's get_text()
+    # so we don't need additional HTML stripping here
+    text = post.get('content', '雪球热点')
     item['title'] = text[:100] + '...' if len(text) > 100 else text
     item['description'] = text
     item['link'] = post.get('link', 'https://xueqiu.com/?category=hotspot')
-    item['pubDate'] = arrow.now().isoformat()
+    item['pubDate'] = parse_timestamp(post.get('timestamp', ''))
     item['author'] = post.get('author', '雪球用户')
     return item
 
@@ -101,7 +134,9 @@ def ctx():
             'items': [{
                 'title': 'Playwright not supported on Vercel',
                 'description': 'This feed requires Playwright, which is not supported on Vercel. Please use the self-hosted scraper image.',
-                'link': 'https://xueqiu.com/?category=hotspot'
+                'link': 'https://xueqiu.com/?category=hotspot',
+                'author': 'RSSHub',
+                'pubDate': arrow.now().isoformat()
             }]
         }
 
@@ -126,6 +161,8 @@ def ctx():
             'items': [{
                 'title': 'Error fetching content',
                 'description': f'An error occurred while fetching the hotspot content. Error: {str(e)}',
-                'link': 'https://xueqiu.com/?category=hotspot'
+                'link': 'https://xueqiu.com/?category=hotspot',
+                'author': 'RSSHub',
+                'pubDate': arrow.now().isoformat()
             }]
         }
