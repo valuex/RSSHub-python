@@ -86,9 +86,6 @@ def parse_timestamp(timestamp_str):
     try:
         # Handle various timestamp formats from Xueqiu
         # Examples: "今天 14:30", "02-15 09:00", "2026-02-15 09:00"
-        import re
-        from datetime import datetime
-        
         if "今天" in timestamp_str:
             # Today's post
             time_match = re.search(r'(\d{1,2}):(\d{2})', timestamp_str)
