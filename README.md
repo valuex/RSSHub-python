@@ -30,6 +30,8 @@ uv sync
 uv run flask run
 ```
 
+> **Note**: For full features (Playwright, PDF processing, etc.), use `pip install -r requirements-full.txt` instead of the default `requirements.txt`.
+
 ---
 
 ## 🛠 Advanced Features
@@ -38,6 +40,12 @@ uv run flask run
 Extract random content blocks from various file formats.
 - Supports: `CSV`, `TSV`, `TXT`, `PDF`, `EPUB`, `MOBI`, and Web URLs.
 - Features: Automatic paragraph joining for PDFs and readability extraction for web pages.
+- Parameters:
+  - `url`: Custom file URL (supports CSV/TXT/PDF/EPUB/MOBI or web pages)
+  - `title_col`: Column index for title (0-based, default: 0)
+  - `delimiter`: Separator type (`tab`, `newline`, `double_newline`, `triple_newline`, etc.)
+  - `min_length`: Minimum title length requirement
+  - `include_context`: Include previous and next lines in description when set to `true`
 
 ### Proxy Readability (`/proxy/readability`)
 A dedicated endpoint to extract clean text from any URL, stripping away ads and navigation.
@@ -64,6 +72,9 @@ docker run -d \
 
 ### Cloud Platforms
 - **Vercel**: [![Deploy with Vercel](https://vercel.app/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fhillerliao%2Frsshub-python)
+  > **Note**: The project is pre-configured for Vercel Lite Mode via `vercel.json`. It uses `requirements-lite.txt` to avoid the 250MB size limit.
+  > Advanced features like Playwright and PDF parsing are disabled in Lite Mode.
+
 - **Zeabur**: Supports both Git integration and pre-built Docker images.
 
 ---
@@ -81,6 +92,3 @@ We welcome new spiders!
 
 - **Discord**: [Join our server](https://discord.gg/4BZBZuyx7p)
 - **Contribution Guide**: Check our [crawler tutorial](https://juejin.cn/post/6953881777756700709) (Chinese).
-
----
-*Actually writing crawlers in Python is more convenient than JS :p*
