@@ -413,6 +413,13 @@ def xueqiu_user(user_id):
     return render_template('main/atom.xml', **filter_content(ctx(user_id)))
 
 
+@bp.route('/xueqiu/hotspot')
+@swr_cache(timeout=1800)  # 30分钟缓存
+def xueqiu_hotspot():
+    from rsshub.spiders.xueqiu.hotspot import ctx
+    return render_template('main/atom.xml', **filter_content(ctx()))
+
+
 @bp.route('/qieman/po_adjust/<string:portfolio_id>')
 @swr_cache(timeout=3600)
 def qieman_po_adjust(portfolio_id='SI000108'):
